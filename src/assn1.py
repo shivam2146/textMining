@@ -10,6 +10,7 @@ import scipy.spatial.distance as ssd
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 import collections
+import codecs
 
 #nltk.download()
 
@@ -21,11 +22,24 @@ def jaccard_similarity(query, document):
 def tokenize_stem(raw):
     
     """
+    lower casing the string
+    """
+    raw = raw.lower()
+    
+    
+    """
+    removing numbers
+    """
+    translator = str.maketrans('', '', string.digits)
+    text_ = raw.translate(translator)
+    
+    """
     removing punctuations from text
     """
-    translator = str.maketrans('', '', string.punctuation)
-    text = raw.translate(translator)
+    translator1 = str.maketrans('', '', string.punctuation)
+    text = text_.translate(translator1)
     
+    #print("raw {} , text_ {} and text{}".format(len(raw),len(text_),len(text)))
     """
     tokenize the text
     """
@@ -35,6 +49,10 @@ def tokenize_stem(raw):
     remove stop words
     """
     stop_words = set(stopwords.words("english"))
+    #print(len(stop_words))
+    stop_words.add("search")
+    stop_words.add("engine")
+    #print(len(stop_words))
     filtered_words = [w for w in words if w not in stop_words]
     
     """
@@ -82,8 +100,12 @@ def get_jacc_similarity_matrix(st):
     return res
 
 def get_text(filename):
-    f= open(filename)
+    """
+    f= open(filename,"rb")
     raw = f.read()
+    """
+    with codecs.open(filename, "r",encoding='utf-8', errors='ignore') as fdata:
+        raw = fdata.read() 
     return raw 
 
 def cluster_texts_kmeans(texts, clusters=3):
@@ -105,53 +127,60 @@ def cluster_texts_kmeans(texts, clusters=3):
  
     return clustering
 
+def fancy_dendrogram(*args, **kwargs):
+    max_d = kwargs.pop('max_d', None)
+    if max_d and 'color_threshold' not in kwargs:
+        kwargs['color_threshold'] = max_d
+    annotate_above = kwargs.pop('annotate_above', 0)
+
+    ddata = dendrogram(*args, **kwargs)
+
+    if not kwargs.get('no_plot', False):
+        plt.title('Hierarchical Clustering Dendrogram (truncated)')
+        plt.xlabel('sample index or (cluster size)')
+        plt.ylabel('distance')
+        for i, d, c in zip(ddata['icoord'], ddata['dcoord'], ddata['color_list']):
+            x = 0.5 * sum(i[1:3])
+            y = d[1]
+            if y > annotate_above:
+                plt.plot(x, y, 'o', c=c)
+                plt.annotate("%.3g" % y, (x, y), xytext=(0, -5),
+                             textcoords='offset points',
+                             va='top', ha='center')
+        if max_d:
+            plt.axhline(y=max_d, c='k')
+    return ddata
+
+
 def main():
-    filenames = ["History of web search engines.txt","ass1_22.txt"]
+    s = "msc-plagiarism-assigment/ass1-"
+    l = ["1349","422","734","808","936","1019","1037","1046","1138","1147","202","211","321","440","505","532","541","606","743","817","826","909"]
+    filenames = [s+item+".txt" for item in l]
+    #print(len(filenames))
     texts = []
     for names in filenames:
         texts.append(get_text(names))
-    filenames.extend(["History of web search engines.txt","ass1_22.txt"])
-    texts.append(texts[0])
-    texts.append(texts[1])
-    
     """
     perform K-means clustering
     """
-    cluster = cluster_texts_kmeans(texts)
+    cluster = cluster_texts_kmeans(texts,5)
     print("\nresult of k-mean clustering")
     for key in cluster.keys():
         files = []
         for item in cluster[key]:
             files.append(filenames[int(item)])
         print("cluster {}: {}".format(key,files))    
-    
-    stemmed_words = tokenize_stem(texts[0])
-    st1 = tokenize_stem(texts[1])
-    #generate data for testing
-    st2 = []
-    st3 = []
-    st4 = []
-    for w in stemmed_words:
-        st2.append(w)
-        st3.append(w)
-        st4.append(w)
-    st2.extend(["hcdsfellp","fgfwfewfvg","vfvgbgtbvthv","vbrbrtbtvtgvgt"])
-    st3.extend(["hevevfergrllp","gfvgtgergg","vtgegergerbvthv"])
-    st4.extend(["hellp","gfvg","vtbvthv","vtvtgvgt","revreve","ververv","vreverv"])
-    #st = np.stack((stemmed_words,stemmed_words,stemmed_words,st2,stemmed_words,stemmed_words,st2)) #this doesn't work if lengths of lists are different
-    st = [stemmed_words,st1,st2,st3,st4]
-    #d = pd.DataFrame(st)
-    
+   
     """
     jaccard similarity matrix
     """
-    jacc_sm = get_jacc_similarity_matrix(st)
+    jacc_sm = get_jacc_similarity_matrix(texts)
     print("\nsimilarity matrix:\n",jacc_sm)
     
     """
     jaccard dissimilarity matrix
     """
-    res = get_jacc_distance_matrix(st)
+    res = get_jacc_distance_matrix(texts)
     print("\n\ndistance matrix:\n",res)
     
     """
@@ -165,7 +194,16 @@ def main():
     """
     Z = linkage(distArray)
     fig = plt.figure(figsize=(25, 10))
-    dn = dendrogram(Z)
+    
+    fancy_dendrogram(
+    Z,
+    labels = l,
+    leaf_rotation=90.,
+    leaf_font_size=12.,
+    show_contracted=True,
+    max_d=.1
+)
+    #dn = dendrogram(Z,labels=l)
     plt.show()
     
 if __name__ == "__main__":
