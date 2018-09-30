@@ -1,0 +1,51 @@
+\documentclass[a4paper]{article}
+
+\usepackage{color}
+\usepackage{graphicx}
+
+\begin{document}
+
+\centerline{\textbf{\underline{\huge{Text Mining - Assignment 2a Report}}}}
+
+\section{Package Used (PYTHON) -:}
+
+\begin{itemize}
+\item Package 1
+\end{itemize}
+
+\section{Algorithms \& Metrics Used -:}
+
+\begin{itemize}
+\item Jaccard Coffecient - Used to calculate the similarity between two sets. 
+\\Formula-:
+$$ J.C =  \frac {n(A \cap B)} {n(A \cup B)}  $$
+Value of Jaccard Coffecient varies from 0 to 1. The value 0 means no similarity and value 1 means completely similar. To find the distance we used the formula $1 - J.C$
+
+\item Hierarchical Clustering - 
+
+\begin{itemize}
+\item Agglomerative Clustering 
+\item Linkage Parameter used - Ward
+\item Distance Metric used -  Jaccard Distance
+\end{itemize}
+
+\item Porter Stemmer 
+
+\end{itemize}
+
+\section{Dataset}
+Dataset consists of 22 text documents which are write up on History of web search engines. We aim to find plagiarism between the documents.
+\\ Pre-processing on data-:
+\begin{itemize}
+\item Tokenization
+\item Case-Folding
+\item Removed digits
+\item Punctuations removed
+\item Stop words removal - We have removed standard stop words for english and along with it search and engine word is also removed.
+\item Stemming - We have used Porter stemmer.
+\end{itemize}
+
+\section{Observations}
+
+
+\end{document}
