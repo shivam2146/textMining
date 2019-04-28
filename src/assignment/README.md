@@ -3,7 +3,7 @@ This folder contains all the assignments and reports for the same.
 
 ## Problem Statement
 The problem statement of all the assignments can be found on url :
-http://people.du.ac.in/~vbhatnagar/scp03500/mcs311-text-18.htm#Assignment1
+[Link](http://people.du.ac.in/~vbhatnagar/scp03500/mcs311-text-18.htm#Assignment1)
 
 ## Data
 The data for the assignment is provided in "Data" folder.
