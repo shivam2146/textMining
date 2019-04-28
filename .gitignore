@@ -118,10 +118,7 @@ etc/
 # mypy
 .mypy_cache/
 
-#files automatically created by codes 
-output
-positive.txt
-negative.txt
-obama_tweets.txt
-tweet_sentiment.csv
-
+#latex
+assn2a/
+assn2b/
+assn2c/
