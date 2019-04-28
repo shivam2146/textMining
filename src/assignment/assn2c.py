@@ -33,7 +33,7 @@ from assn1_1 import get_text
 # In[3]:
 
 
-s = "msc-plagiarism-assigment/ass1-"
+s = "Data/ass1-"
 l = ["1349","422","734","808","936","1019","1037","1046","1138","1147","202","211","321","440","505","532","541","606","743","817","826","909"]
 filenames = [s+item+".txt" for item in l]    
 
